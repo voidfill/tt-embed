@@ -1,0 +1,55 @@
+import express from "express";
+
+import { router as videoRouter, getTtv } from "./routes/video.js";
+import { router as jsonRouter, getJson } from "./routes/json.js";
+import makeEntry from "./helpers/makeEntry.js";
+import { makeBasicText } from "./helpers/makeSite.js";
+
+const port = process.env.PORT || 3000;
+const app = express();
+const store = {};
+
+app.use("/video", videoRouter);
+app.use("/json", jsonRouter);
+
+app.get("/", async (req, res) => {
+	if (!req.query.q || !req.query.q?.startsWith("https://")) {
+		res.writeHead(200, {
+			"Content-Type": "text/html",
+		});
+		res.end(makeBasicText("no (proper) query! Add one like this: https://tt-embed.herokuapp.com/?q={link to tiktok}"));
+		return;
+	}
+
+	try {
+		if (req.query.q.indexOf("?") !== -1) {
+			req.query.q = req.query.q.split("?")[0];
+		}
+		const bUrl = Buffer.from(req.query.q).toString("base64");
+
+		if (!getTtv(bUrl) || !getJson(bUrl) || !store[bUrl]) {
+			console.log(bUrl + " not in store, trying to create");
+			const site = await makeEntry(bUrl, true);
+			if (!site) {
+				res.writeHead(200, {
+					"Content-Type": "text/html",
+				});
+				res.end(makeBasicText("failed, are you sure the video is public and not deleted?"));
+				return;
+			}
+			store[bUrl] = site;
+		}
+
+		console.log("in store " + bUrl);
+		res.writeHead(200, {
+			"Content-Type": "text/html",
+		});
+		res.end(store[bUrl]);
+	} catch (e) {
+		console.log(e);
+		res.writeHead(500, "error");
+		return;
+	}
+});
+
+app.listen(port, () => console.log(`Listening on port ${port}`));
