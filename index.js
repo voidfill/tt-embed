@@ -10,9 +10,9 @@ import { makeBasicText } from "./helpers/makeSite.js";
 
 const baseDir = "../../../etc/letsencrypt/live/tt-embed.com/";
 const httpsOptions = {
-	cert: readFileSync(baseDir + "cert.pem"),
-	key: readFileSync(baseDir + "privkey.pem"),
-	ca: readFileSync(baseDir + "chain.pem"),
+	cert: readFileSync(baseDir + "cert.pem", "utf8"),
+	key: readFileSync(baseDir + "privkey.pem", "utf8"),
+	ca: readFileSync(baseDir + "chain.pem", "utf8"),
 };
 
 const httpPort = 80;
@@ -24,6 +24,7 @@ const store = {};
 app.use((req, res, next) => {
 	if(req.protocol === "http") {
 		res.redirect(`https://${req.headers.host}${req.url}`);
+		return;
 	}
 	next();
 });
@@ -75,6 +76,6 @@ createHttpServer(app).listen(httpPort, () => {
 	console.log(`http server listening on port ${httpPort}`);
 });
 
-createHttpsServer(app).listen(httpsPort, httpsOptions, () => {
+createHttpsServer(httpsOptions, app).listen(httpsPort, () => {
 	console.log("https server listening on port " + httpsPort);
 });
