@@ -1,13 +1,32 @@
 import express from "express";
+import { createServer as createHttpsServer } from "https";
+import { createServer as createHttpServer } from "http";
+import { readFileSync } from "fs";
 
 import { router as videoRouter, getTtv } from "./routes/video.js";
 import { router as jsonRouter, getJson } from "./routes/json.js";
 import makeEntry from "./helpers/makeEntry.js";
 import { makeBasicText } from "./helpers/makeSite.js";
 
-const port = process.env.PORT || 3000;
+const baseDir = "../../../etc/letsencrypt/live/tt-embed.com/";
+const httpsOptions = {
+	cert: readFileSync(baseDir + "cert.pem"),
+	key: readFileSync(baseDir + "privkey.pem"),
+	ca: readFileSync(baseDir + "chain.pem"),
+};
+
+const httpPort = 80;
+const httpsPort = 443;
 const app = express();
+
 const store = {};
+
+app.use((req, res, next) => {
+	if(req.protocol === "http") {
+		res.redirect(`https://${req.headers.host}${req.url}`);
+	}
+	next();
+});
 
 app.use("/video", videoRouter);
 app.use("/json", jsonRouter);
@@ -17,7 +36,7 @@ app.get("/", async (req, res) => {
 		res.writeHead(200, {
 			"Content-Type": "text/html",
 		});
-		res.end(makeBasicText("no (proper) query! Add one like this: https://tt-embed.herokuapp.com/?q={link to tiktok}"));
+		res.end(makeBasicText("no (proper) query! Add one like this: https://tt-embed.com/?q={link to tiktok}"));
 		return;
 	}
 
@@ -52,4 +71,10 @@ app.get("/", async (req, res) => {
 	}
 });
 
-app.listen(port, () => console.log(`Listening on port ${port}`));
+createHttpServer(app).listen(httpPort, () => {
+	console.log(`http server listening on port ${httpPort}`);
+});
+
+createHttpsServer(app).listen(httpsPort, httpsOptions, () => {
+	console.log("https server listening on port " + httpsPort);
+});
