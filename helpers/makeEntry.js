@@ -19,7 +19,7 @@ export default async function makeEntry (id, metaSite = false) {
         setTtv(id, parsed.ttv);
         setJson(id, {
             provider_name: "TikTok Reembedder, ❤ " + parsed.likes + " 💬 " + parsed.comments,
-            provider_url: "https://tt-embed.herokuapp.com/",
+            provider_url: "https://tt-embed.com/",
             author_name: parsed.description,
             author_url: parsed.ogUrl,
         });

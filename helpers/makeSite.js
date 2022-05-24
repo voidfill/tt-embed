@@ -2,8 +2,8 @@ const makeMetaSite = ({ authorName, authorAt }, bUrl) => {
 	//prettier-ignore
 	return `<head>
 		<meta content="${authorName + " (@" + authorAt + ")"}" property="og:title">
-		<meta content="https://tt-embed.herokuapp.com/video/${bUrl}" property="og:video:url">
-		<link type="application/json+oembed" href="https://tt-embed.herokuapp.com/json/${bUrl}" />
+		<meta content="https://tt-embed.com/video/${bUrl}" property="og:video:url">
+		<link type="application/json+oembed" href="https://tt-embed.com/json/${bUrl}" />
 		
 		<meta content="video/mp4" property="og:video:type">
 		<meta content="video" property="og:type">
