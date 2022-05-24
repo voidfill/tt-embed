@@ -10,14 +10,16 @@ export default async function parse(url) {
 				`<title data-rh="true">This video is unavailable. Visit TikTok to discover more trending videos.</title>`
 			) !== -1
 		) {
+			console.log("unavailable");
 			return false;
 		}
 
-		const ttvStart = text.indexOf('"preloadList":[{"url":"https:');
-		const ttvEnd = text.indexOf("&vr=");
-		ret.ttv = text.substring(ttvStart + 23, ttvEnd + 3).replace(/\\u002F/g, "/");
+		const ttvStart = text.indexOf('","playAddr":"');
+		const ttvEnd = text.indexOf(`","downloadAddr":"https`);
+		ret.ttv = text.substring(ttvStart + 14, ttvEnd).replace(/\\u002F/g, "/");
 
 		if (!ret.ttv.startsWith("https")) {
+			console.log("no ttv found");
 			return false;
 		}
 
