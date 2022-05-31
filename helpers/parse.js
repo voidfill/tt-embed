@@ -1,5 +1,3 @@
-import fetch from "node-fetch";
-
 export default async function parse(url) {
 	try {
 		const text = await (await fetch(url)).text();
