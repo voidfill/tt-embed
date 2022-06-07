@@ -2,6 +2,7 @@ import express from 'express';
 import { createServer as createHttpsServer } from 'https';
 import { createServer as createHttpServer } from 'http';
 import { readFileSync } from 'fs';
+import { join, dirname } from 'path';
 
 import { router as videoRouter, getTtv } from './routes/video.js';
 import { router as jsonRouter, getJson } from './routes/json.js';
@@ -17,12 +18,17 @@ let baseDir;
 const httpsOptions = {};
 
 if (https) {
-    baseDir = '../../../etc/letsencrypt/live/tt-embed.com/';
-    httpsOptions = {
-        cert: readFileSync(baseDir + 'cert.pem', 'utf8'),
-        key: readFileSync(baseDir + 'privkey.pem', 'utf8'),
-        ca: readFileSync(baseDir + 'chain.pem', 'utf8'),
-    };
+    try {
+        baseDir = '../../../etc/letsencrypt/live/tt-embed.com/';
+        httpsOptions = {
+            cert: readFileSync(baseDir + 'cert.pem', 'utf8'),
+            key: readFileSync(baseDir + 'privkey.pem', 'utf8'),
+            ca: readFileSync(baseDir + 'chain.pem', 'utf8'),
+        };
+    } catch (e) {
+        console.log('Could not load HTTPS certs\nFalling back to HTTP');
+        https = false;
+    }
 }
 
 const httpPort = 80;
@@ -45,14 +51,7 @@ app.use('/json', jsonRouter);
 
 app.get('/', async (req, res) => {
     if (!req.query.q || !req.query.q?.startsWith('https://')) {
-        res.writeHead(200, {
-            'Content-Type': 'text/html',
-        });
-        res.end(
-            makeBasicText(
-                'no (proper) query! Add one like this: https://tt-embed.com/?q={link to tiktok}',
-            ),
-        );
+        res.sendFile(join(process.cwd(), '/routes/base.html'));
         return;
     }
 
