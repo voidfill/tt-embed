@@ -12,7 +12,7 @@ export default async function parse(url) {
 			return false;
 		}
 
-		const ttvStart = text.indexOf('","playAddr":"');
+		const ttvStart = text.indexOf(`","playAddr":"`);
 		const ttvEnd = text.indexOf(`","downloadAddr":"https`);
 		ret.ttv = text.substring(ttvStart + 14, ttvEnd).replace(/\\u002F/g, "/");
 
