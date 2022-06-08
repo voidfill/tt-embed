@@ -9,13 +9,9 @@ import { router as jsonRouter, getJson } from "./routes/json.js";
 import makeEntry from "./helpers/makeEntry.js";
 import { makeBasicText } from "./helpers/makeSite.js";
 
-let https = true;
-if (process.argv.includes("--http")) {
-	https = false;
-}
-
+let https = process.argv.includes("--http") ? false : true;
 let baseDir;
-const httpsOptions = {};
+let httpsOptions = {};
 
 if (https) {
 	try {
