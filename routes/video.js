@@ -24,7 +24,11 @@ router.get("/:id", async (req, res) => {
 			}
 		}
 
-		const ok = await fetch(ttvStore[req.params.id]);
+		const controller = new AbortController();
+		const ok = await fetch(ttvStore[req.params.id], {
+			method: "GET",
+			signal: controller.signal,
+		});
 		if (ok.status !== 200) {
 			console.log("ttv not ok, creating..", req.params.id);
 			const entry = await makeEntry(req.params.id, false);
@@ -34,6 +38,7 @@ router.get("/:id", async (req, res) => {
 			}
 		}
 		res.redirect(ttvStore[req.params.id]);
+		controller.abort();
 	} catch (e) {
 		console.log(e);
 		res.writeHead(503, "failed");
