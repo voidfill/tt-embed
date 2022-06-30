@@ -19,7 +19,7 @@ export default async function parseSlides(url) {
 		for (let i = 0; i < temp.length; i++) {
 			const start = temp[i].indexOf('src="') + 5;
 			const end = temp[i].indexOf(`" class="tiktok`);
-			ret[i] = temp[i].substring(start, end);
+			ret[i] = temp[i].substring(start, end).replaceAll("&amp;", "&");
 		}
 
 		return ret;

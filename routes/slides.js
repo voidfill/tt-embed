@@ -49,7 +49,7 @@ router.get("/", async (req, res) => {
 				signal: controller.signal,
 			});
 			controller.abort();
-			
+
 			if (ok.status !== 200) {
 				console.log("slide image not ok, recreating..");
 				const entry = await updateSlide();
