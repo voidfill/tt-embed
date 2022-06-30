@@ -2,10 +2,11 @@ import express from "express";
 import { createServer as createHttpsServer } from "https";
 import { createServer as createHttpServer } from "http";
 import { readFileSync } from "fs";
-import { join, dirname } from "path";
+import { join } from "path";
 
 import { router as videoRouter, getTtv } from "./routes/video.js";
 import { router as jsonRouter, getJson } from "./routes/json.js";
+import { router as slideRouter } from "./routes/slides.js";
 import makeEntry from "./helpers/makeEntry.js";
 import { makeBasicText } from "./helpers/makeSite.js";
 
@@ -44,6 +45,7 @@ if (https) {
 }
 app.use("/video", videoRouter);
 app.use("/json", jsonRouter);
+app.use("/slides", slideRouter);
 
 app.get("/", async (req, res) => {
 	if (!req.query.q || !req.query.q?.startsWith("https://")) {

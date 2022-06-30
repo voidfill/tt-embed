@@ -11,6 +11,18 @@ const makeMetaSite = ({ authorName, authorAt }, bUrl) => {
 		</head>`;
 };
 
+const makeBasicImage = (image, title, description) => {
+	//prettier-ignore
+	return `<head>
+		<meta content="${title}" property="og:title">
+		<meta content="${description}" property="og:description">
+		<meta content="${image}" property="og:image">
+
+		<meta content="image/jpeg" property="og:image:type">
+		<meta name="theme-color" content="#01d3a9">
+		</head>`;
+}
+
 const makeBasicText = (text, error = true) => {
 	return `<head>
 			<meta content="${error ? "failed" : ""}" property="og:title">
@@ -21,5 +33,6 @@ const makeBasicText = (text, error = true) => {
 
 export {
 	makeMetaSite,
+	makeBasicImage,
 	makeBasicText,
 };
