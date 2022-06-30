@@ -77,8 +77,8 @@ router.get("/", async (req, res) => {
 		res.end(
 			makeBasicImage(
 				slideStore[bUrl][req.query.slide],
-				`Cycle through the slides by incrementing the slide number`,
-				`${req.query.slide}/${slideStore[bUrl].length}`
+				`${req.query.slide}/${slideStore[bUrl].length}`,
+				`Cycle through the slides by incrementing the slide number`
 			)
 		);
 	} catch (e) {

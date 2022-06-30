@@ -19,6 +19,7 @@ const makeBasicImage = (image, title, description) => {
 		<meta content="${image}" property="og:image">
 
 		<meta content="image/jpeg" property="og:image:type">
+		<meta name="twitter:card" content="summary_large_image">
 		<meta name="theme-color" content="#01d3a9">
 		</head>`;
 }
